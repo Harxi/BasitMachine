@@ -33,4 +33,5 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 
 Instruction | Operands                                                | Example  | description
 ------------|---------------------------------------------------------|----------|------------
-`mov`       | `<Register, address>`, `<Register, address, char, int>` | mov a, b | move `b` to `a`
+`mov`       | `<Register, address>`, `<Register, address, char, int>` | `mov a, b` | move `b` to `a`
+`push`      | `<Register, char, int>` (EEatsThere areThere are There is inThere is a whoThere is a vozmThere is a vzdnThere is a lot ofThere is a lot ofThere is a vznozhetThere are manyThere is a vznozhetThere are moreThere is a lot ofThere is a lot ofThere is a vzdn
