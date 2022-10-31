@@ -31,4 +31,6 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 
 ## BMASM Guide
 
-**Coming soon**
+Instruction | Operands                                                | Example  | description
+------------|---------------------------------------------------------|----------|------------
+`mov`       | `<Register, address>`, `<Register, address, char, int>` | mov a, b | move `b` to `a`
