@@ -30,16 +30,17 @@ cd BasitMachine
 What's next? Then you can change the configuration, write to BasitMachineAssambler, whatever.
 
 ## BMASM Guide
+### Registers
 
-| Register | Bit |
-|----------|-----|
-| `chr`    | `8` |
-| `op`     | `8` |
-| `ret`    | `8` |
-| `p`      | `8` |
-| `sp`     | `8` |
-| `oth`    | `8` |
-| `flags`  | `3` |
+| Register | Full name  | Bit |
+|----------|------------|-----|
+| `chr`    | Char       | `8` |
+| `op`     | output     | `8` |
+| `ret`    | return     | `8` |
+| `p`      | pointer    | `8` |
+| `sp`     | stackpoint | `8` |
+| `oth`    | other      | `8` |
+| `flags`  | flags      | `3` |
 
 | Flag | Bit |
 |------|-----|
@@ -47,6 +48,16 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 | `gt` | `1` |
 | `lt` | `1` |
 
+### Interrupts
+
+| Interrupt | Description                     |
+|-----------|---------------------------------|
+| `1`       | print char from ascii table, with index register `chr`
+| `2`       | input and everything entered pushes in stack
+| `3`       | invert stack     
+| `4`       | reset flags    
+
+### Instructions
 | Instruction          | Opernads                                                    | Example        | Description                                                                                                                                                      |   
 |----------------------|-------------------------------------------------------------|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `mov`                | `<Register, address>`, `<Register, address, char, integer>` | `mov a, b`     | Move `b` to `a`                                                                                                                                                  |   
