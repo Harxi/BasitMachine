@@ -17,8 +17,9 @@ after installing Python3, we will install pip.
 apt install python3-pip
 ```
 
-Good! Now clone the repository.
+Good! Now clone the repository and install required lark library. 
 ```sh
+pip install lark
 apt install git
 git clone https://github.com/Harxi/BasitMachine
 ```
