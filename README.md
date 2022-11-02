@@ -51,12 +51,12 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 
 ### Interrupts
 
-| Interrupt | Description                     |
-|-----------|---------------------------------|
+| Interrupt | Description                                           | 
+|-----------|-------------------------------------------------------|
 | `1`       | print char from ascii table, with index register `chr`
 | `2`       | input and everything entered pushes in stack
-| `3`       | invert stack     
-| `4`       | reset flags    
+| `3`       | invert stack                                          |   
+
 
 ### Instructions
 | Instruction          | Opernads                                                    | Example        | Description                                                                                                                                                      |   
