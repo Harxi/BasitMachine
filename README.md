@@ -57,6 +57,35 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 | `2`       | input and everything entered pushes in stack
 | `3`       | invert stack                                          |   
 
+## Point syntax
+
+```bmasm
+name {
+    instructions
+}
+```
+
+## Instruction syntax
+
+```bmasm
+instruction a, b, c
+```
+
+## Comment syntax
+
+```bmasm
+; is comment!
+```
+
+## Types syntax
+
+```bmasm
+a   ;register (point only for j-family)
+1   ;integer
+"c" ; char
+#0  ; address (integer)
+#a  ; addrsss (register)
+```
 
 ### Instructions
 | Instruction          | Opernads                                                    | Example        | Description                                                                                                                                                      |   
