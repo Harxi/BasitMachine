@@ -84,7 +84,7 @@ a   ;register (point only for j-family)
 1   ;integer
 "c" ; char
 #0  ; address (integer)
-#a  ; addrsss (register)
+#a  ; address (register)
 ```
 
 ### Instructions
