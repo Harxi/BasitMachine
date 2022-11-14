@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2023 Harxi
+
 import os
 
 class BFSInitialize:
