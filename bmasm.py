@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2023 Harxi
+
 from lark import Lark, Transformer, Token
 
 class ToJson(Transformer):
