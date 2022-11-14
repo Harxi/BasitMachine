@@ -1,3 +1,5 @@
+# Copyright (c) 2022-2023 Harxi
+
 class Ram:
 	def __init__(self, size: int, bits):
 		self.size = size
