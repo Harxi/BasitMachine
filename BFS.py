@@ -42,16 +42,12 @@ class BFSInitialize:
 		if len(disks["mainDisk"][0]) > 1 or len(disks["basitDisk"][0]) > 1:
 			print("Ерор размеров названия")
 			exit(-1)
-		try:
+		if ".BFS" in os.listdir(): os.chdir(".BFS")
+		else:
 			os.mkdir(".BFS")
 			os.chdir(".BFS")
-		except:
-			os.chdir(".BFS")
-		try:
-			os.mkdir(disks["mainDisk"][0])
-			os.mkdir(disks["basitDisk"][0])
-		except:
-			pass
+		if disks["mainDisk"][0] not in os.listdir(): os.mkdir(disks["mainDisk"][0])
+		if disks["basitDisk"][0] not in os.listdir(): os.mkdir(disks["basitDisk"][0])
 		self.root = os.getcwd()
 		self.curdir = self.root
 		self.disk = "~"
@@ -83,7 +79,7 @@ class BFSInitialize:
 		except: pass
 		self.checkSize()
 	
-	def getFile(self, name):
+	def getfile(self, name):
 		if os.getcwd() == self.root:
 			self.disk = "~"
 			print("Permission denied")
