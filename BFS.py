@@ -2,6 +2,40 @@
 
 import os
 
+class HexTable():
+	def __init__(self, file):
+		self.file = file
+		self.hex = []
+
+	def newline(self):
+		for _ in range(16):
+			self.hex.append(0)
+
+	def newbyte(self):
+		self.hex.append(0)
+		
+	def edit(self, x: int, value: int):
+		self.hex[x] = value
+		
+	def insert(self, value: str, exist: bool = True):
+		if not exist:
+			for _ in range(len(value)):
+				self.newbyte()
+			
+		for ind, char in enumerate(value):
+			self.edit(ind, ord(char))
+			
+	def get(self):
+		with open(self.file, "r") as f:
+			self.insert(f.read(), False)
+			
+	def dump(self):
+		hex = ""
+		with open(self.file, "w") as f:
+			for ind, digit in enumerate(self.hex):
+				hex += f"{chr(digit)}"
+			f.write(hex)
+
 class BFSInitialize:
 	def __init__(self, disks: dict):
 		self.disks = disks
@@ -49,10 +83,14 @@ class BFSInitialize:
 		except: pass
 		self.checkSize()
 	
-	def write(self, path, text):
-		with open(path, "w") as f: f.write(text)
-		self.checkSize()	
-	
+	def getFile(self, name):
+		if os.getcwd() == self.root:
+			self.disk = "~"
+			print("Permission denied")
+		else:
+			table = HexTable(name.split("/")[len(name.split("/"))-1])
+			return table
+		
 	def mkfile(self, name):
 		if os.getcwd() == self.root:
 			self.disk = "~"
@@ -63,14 +101,6 @@ class BFSInitialize:
 			else:
 				open(name, "w").close()
 		self.checkSize()
-	
-	def getFile(self, name):
-		if os.getcwd() == self.root:
-			self.disk = "~"
-			print("Permission denied")
-		else:
-			with open(name, "r") as f:
-				return f.read()
 	
 	def cd(self, index: int):
 		if os.getcwd() == self.root:
