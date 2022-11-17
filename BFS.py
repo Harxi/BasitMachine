@@ -98,16 +98,18 @@ class BFSInitialize:
 				open(name, "w").close()
 		self.checkSize()
 	
-	def cd(self, index: int):
+	def cd(self, path):
 		if os.getcwd() == self.root:
 			self.disk = "~"
 			print("Permission denied")
 		else:
-			if index == -1:
-				os.chdir("..")
-			else:
-				os.chdir(sorted(os.listdir())[index])
-		self.curdir = os.getcwd()
+			for name in path.split("/"):
+				os.chdir(name)
+				self.curdir = os.getcwd()
+				if os.getcwd() == self.root:
+					self.disk = "~"
+					print("Permission denied")
+					break
 	
 	def chdisk(self, name: str):
 		if name == "~":
