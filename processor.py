@@ -2,6 +2,7 @@
 
 from sys import stdout
 import json
+import zlib
 
 import ram
 import BFS
@@ -335,8 +336,8 @@ class Bas1xInstructions:
 				cdisk = interrupts.bfs.disk
 				interrupts.bfs.chdisk(interrupts.bfs.disks["basitDisk"][0])
 				interrupts.bfs.cd("basib")
-				with open(value[0]["value"], "r") as f:
-					bas1x(interrupts, json.load(f))
+				with open(value[0]["value"], "rb") as f:
+					bas1x(interrupts, json.loads(zlib.decompress(f.read()).decode()))
 			else:
 				print("OperandError: incorrect operand")
 				exit(-1)
