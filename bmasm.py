@@ -22,9 +22,8 @@ class ToJson(Transformer):
 		(r,) = r
 		return {'type': 'adrs', 'value': r}
 		
-	def section(self, r):
-		(r,) = r
-		return {'type': 'section', 'value': r.value}
+	def section(self, f):
+		return {'type': 'section', 'name': f[0].value, 'value': f[1:len(f)]}
 
 	def block(self, d):
 		return d
@@ -34,13 +33,13 @@ class ToJson(Transformer):
 				
 grammar = Lark(r"""
     start: instruction*
-    ?instruction: function | point
+    ?instruction: function | point | section
     register: /[a-z]+/
     string: ESCAPED_STRING
     integer: SIGNED_NUMBER
     address: "#"(register | integer)
-    section: "$"/[a-z]+/
-    ?types: (string | integer | register | address | section)
+    section: /[a-zA-Z]+/ "=" (string | integer | register) ":" (string | integer | register)
+    ?types: (string | integer | register | address)
     function: /[a-z]+/ (types ("," types)*)
     block: ( instruction* )
     point: /[a-z]+/ "{" block "}"
