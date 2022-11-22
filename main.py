@@ -5,7 +5,7 @@ import BFS
 import config
 
 code = """
-mov oth, 1
+
 """ # ТУТ ТВОЙ КОД ДЛЯ АССЕМБЛЕРА
 
 
