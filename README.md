@@ -1,6 +1,12 @@
-# BasitMachine (First version)
+# BasitMachine 0.16
 ## Description
 This is a virtual machine with its own Bas1x architecture, it reads the json tree.
+
+## Patchlog
+- Added BFS services (beta, not full)
+- Added libs
+- Added string (New: `push "TEXT"`, Old: `push "T","E","X","T"`)
+- Fixed bugs
 
 ## Installation linux
 
@@ -36,7 +42,7 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 | Register | Full name  | Bit |
 |----------|------------|-----|
 | `chr`    | Char       | `8` |
-| `op`     | output     | `8` |
+| `ctr`    | counter    | `8` |
 | `ret`    | return     | `8` |
 | `p`      | pointer    | `8` |
 | `sp`     | stackpoint | `8` |
@@ -53,9 +59,10 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 
 | Interrupt | Description                                           | 
 |-----------|-------------------------------------------------------|
-| `1`       | print char from ascii table, with index register `chr`
-| `2`       | input and everything entered pushes in stack
-| `3`       | invert stack                                          |   
+| `1`       | print char from ascii table, with index register `chr`|
+| `2`       | input and everything entered pushes in stack          |
+| `3`       | invert stack                                          |
+| `4`       | BFS services                                          |  
 
 ## Point syntax
 
@@ -100,3 +107,4 @@ a   ;register (point only for j-family)
 | `add`                | `<Register>`, `<Register, char, integer>`                   | `add a, b`     | add `b` to `a`                                                                                                                                                   |
 | `set`                | `<Flag>`, `<Register, char, integer>` (only 1 or 0)         | `set a, b`     | set flag `a` with value `b`                                                                                                                                      |
 | `int`                | `<Register, char, integer>`                                 | `int a`        | call the `a` interrupt                                                                                                                                         |
+| `inc`                | `<string>`                                 | `int "lib"`        | include lib from basitDisk/basib                                                                                                                                         |
