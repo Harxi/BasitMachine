@@ -1,6 +1,7 @@
 # Copyright (c) 2022-2023 Harxi
 
 from sys import stdout
+import json
 
 import ram
 import BFS
@@ -19,7 +20,7 @@ class Registers:
 	def __init__(self):
 		self.regs = [register for register in config.cfg["registers"]]
 		self.chr = config.cfg["registers"]["chr"]
-		self.op = config.cfg["registers"]["op"]
+		self.ctr = config.cfg["registers"]["ctr"]
 		self.ret = config.cfg["registers"]["ret"]
 		self.p = config.cfg["registers"]["p"]
 		self.sp = config.cfg["registers"]["sp"]
@@ -78,6 +79,35 @@ class Interrupts:
 	
 	def invertStack(self):
 		self.stack.stack = self.stack.stack[::-1]
+	
+	def BFSservices(self):
+		function = self.stack.pop()
+		if function == 1:
+			self.bfs.chdisk(chr(self.stack.pop()))
+				
+		if function == 2:
+			size = self.stack.pop()
+			string = ""
+			for char in range(0, size):
+				string += chr(self.stack.pop())
+			string = string[::-1]
+			self.bfs.getfile(string)
+			
+		if function == 3:
+			self.bfs.file.get()
+			sizes = [self.stack.pop(), self.stack.pop()]
+			for index in range(sizes[1], sizes[0]+1):
+				if index == len(self.bfs.file.hex):
+					break
+				self.ram.memory[index]["value"] = self.bfs.file.hex[index]
+		
+		if function == 4:
+			sizes = [self.stack.pop(), self.stack.pop()]
+			self.bfs.file.hex = [self.ram.memory[value]["value"] for value in self.ram.memory][sizes[1]:sizes[0]]
+			self.bfs.file.dump()
+			
+	
+	
 # INTERRUPTS END
 
 # OTHER
@@ -98,7 +128,7 @@ class Bas1xInstructions:
 	@staticmethod
 	def move(interrupts, value):
 		if len(value) < 2 or len(value) > 2:
-			print("OpperandError: many or few opperands")
+			print("OperandError: many or few operands")
 			exit(-1)
 		else:
 			if value[1]["type"] == "reg":
@@ -107,8 +137,9 @@ class Bas1xInstructions:
 					print(f"RegisterError: Register '{value[1]['value']}' not found")
 					exit(-1)
 			elif value[1]["type"] == "adrs":
+				
 				if value[1]["value"]["type"] == "reg":
-					if value[1]["value"]["value"] in interrupts.registers.regs: value[1]["value"] = replaceRegister(interrupts, value[1]["value"]["value"])
+					if value[1]["value"]["value"] in interrupts.registers.regs: temp1 = replaceRegister(interrupts, value[1]["value"]["value"])
 					else:
 						print(f"RegisterError: Register '{value[1]['value']['value']}' not found")
 						exit(-1)
@@ -117,18 +148,25 @@ class Bas1xInstructions:
 					print(f"RegisterError: Register '{value[ind]['value']}' not found")
 					exit(-1)
 				#print(value)
+			temp1 = value[1]
+			
 			if value[0]["type"] == "reg":
 				if value[0]["value"] not in interrupts.registers.regs:
 					print(f"RegisterError: Register '{value[0]['value']}' not found")
 					exit(-1)
 				exec('%s = %d'%(f'interrupts.registers.{value[0]["value"]}["value"]',value[1]["value"]))
+
 			elif value[0]["type"] == "adrs":
+				temp = value[0]["value"]
 				if value[0]["value"]["type"] == "reg":
-					if value[0]["value"]["value"] in interrupts.registers.regs: value[0]["value"] = replaceRegister(interrupts, value[0]["value"]["value"])
+					if value[0]["value"]["value"] in interrupts.registers.regs:
+						temp = replaceRegister(interrupts, value[0]["value"]["value"])
 					else:
 						print(f"RegisterError: Register '{value[0]['value']['value']}' not found")
 						exit(-1)
-				if value[0]["value"]["value"] < interrupts.ram.size: interrupts.ram.memory[value[0]["value"]["value"]] = {"size": interrupts.ram.memory[value[0]["value"]["value"]]["size"], "value": value[1]["value"]}
+
+				if temp["value"] < interrupts.ram.size:
+					interrupts.ram.memory[temp["value"]] = {"size": interrupts.ram.memory[temp["value"]]["size"], "value": temp1["value"]}
 				else:
 					print(f"RegisterError: Register '{value[ind]['value']}' not found")
 					exit(-1)
@@ -146,17 +184,17 @@ class Bas1xInstructions:
 	@staticmethod
 	def pop(interrupts, value):
 		if len(value) > 1 or len(value) < 1:
-			print("OpperandError: many opperands")
+			print("operandError: many operands")
 			exit(-1)
 		else:
 			if value[0]["value"] in interrupts.registers.regs: exec('%s = %d'%(f'interrupts.registers.{value[0]["value"]}["value"]',interrupts.stack.pop()))
 			else:
-				print("OpperandError: incorrect opperands")
+				print("OperandError: incorrect operands")
 				exit(-1)
 	@staticmethod
 	def goto(interrupts, value, tokens):
 		if len(value) < 2 or len(value) > 2:
-			print("OpperandError: many or few opperands")
+			print("OperandError: many or few operands")
 			exit(-1)
 		else:
 			for ind in range(len(value)):
@@ -177,7 +215,7 @@ class Bas1xInstructions:
 	@staticmethod
 	def ret(interrupts, value):
 		if len(value) > 1 or len(value) < 1:
-			print("OpperandError: many opperands")
+			print("OperandError: many operands")
 			exit(-1)
 		else:
 			if value[0]["type"] == "reg":
@@ -189,7 +227,7 @@ class Bas1xInstructions:
 	@staticmethod
 	def cmp(interrupts, value):
 		if len(value) > 2 or len(value) < 2:
-			print("OpperandError: many or few opperands")
+			print("OperandError: many or few operands")
 			exit(-1)
 		else:
 			for ind in range(len(value)):
@@ -218,7 +256,7 @@ class Bas1xInstructions:
 	@staticmethod
 	def add(interrupts, value):
 		if len(value) > 2 or len(value) < 2:
-			print("OpperandError: many or few opperands")
+			print("OperandError: many or few operands")
 			exit(-1)
 		else:
 			if value[1]["type"] == "reg":
@@ -234,7 +272,7 @@ class Bas1xInstructions:
 	@staticmethod
 	def jmp(interrupts, value):
 		if len(value) > 1 or len(value) < 1:
-			print("OpperandError: many opperands")
+			print("operandError: many operands")
 			exit(-1)
 		else:
 			if value[0]["type"] == "reg":
@@ -244,12 +282,12 @@ class Bas1xInstructions:
 					print(f"PointError: Point '{value[0]['value']}' not found")
 					exit(-1)
 			else:
-				print("OpperandError: incorrect opperand")
+				print("OperandError: incorrect operand")
 				exit(-1)
 	@staticmethod
 	def set(interrupts, value):
 		if len(value) > 2 or len(value) < 2:
-			print("OpperandError: many or few opperands")
+			print("OperandError: many or few operands")
 			exit(-1)
 		else:
 			if value[1]["type"] == "reg":
@@ -267,9 +305,45 @@ class Bas1xInstructions:
 				exit(-1)
 			exec('%s = %d'%(f'interrupts.registers.flags.{value[0]["value"]}',value[1]["value"]))
 	@staticmethod
+	def ext(interrupts, value):
+		if len(value) > 1 or len(value) < 1:
+			print("OperandError: many operands")
+			exit(-1)
+		else:
+			if value[0]["type"] == "reg":
+				if value[0]["value"] in sections:
+					for value in sections[value[0]["value"]]:
+						if value["type"] == "reg":
+							if value["value"] in interrupts.registers.regs: value = replaceRegister(interrupts, value["value"])
+							else:
+								print(f"RegisterError: Register '{value['value']}' not found")
+								exit(-1)
+						interrupts.stack.push(value["value"])
+				else:
+					print(f"SectionError: Section '{value[0]['value']}' not found")
+					exit(-1)
+			else:
+				print("OperandError: incorrect operand")
+				exit(-1)
+	@staticmethod
+	def inc(interrupts, value):
+		if len(value) > 1 or len(value) < 1:
+			print("OperandError: many operands")
+			exit(-1)
+		else:
+			if value[0]["type"] == "str":
+				cdisk = interrupts.bfs.disk
+				interrupts.bfs.chdisk(interrupts.bfs.disks["basitDisk"][0])
+				interrupts.bfs.cd("basib")
+				with open(value[0]["value"], "r") as f:
+					bas1x(interrupts, json.load(f))
+			else:
+				print("OperandError: incorrect operand")
+				exit(-1)
+	@staticmethod
 	def interrupt(interrupts, value):
 		if len(value) > 1 or len(value) < 1:
-			print("OpperandError: many opperands")
+			print("OperandError: many operands")
 			exit(-1)
 		else:
 			if value[0]["type"] == "reg":
@@ -288,29 +362,38 @@ class Bas1xInstructions:
 				interrupts.invertStack()
 			
 			if value[0] == 4:
-				interrupts.clearFlags()
+				interrupts.BFSservices()
+				
 # BAS1X INSTRUCTIONS END
 
 # BAS1X EXECUTER
 def bas1x(interrupts: Interrupts, tokens: list):
 	for token in tokens:
+		
 		type = token["type"]
 		name = token["name"]
 		value = [v for v in token["value"]]
+		
 		for ind in range(len(value)):
 			# PREPROCESSOR
-			if value[ind]["type"] == "str":
-				if value[ind]["value"] == "":
-					value[ind] = {"type": "int", "value": 0}
-				else:
-					if ord(value[ind]["value"][0]) > 2**interrupts.registers.chr["size"]-1:
-						value[ind] = {"type": "int", "value": 2**interrupts.registers.chr["size"]-1}
-					else:
-						value[ind] = {"type": "int", "value": ord(value[ind]["value"][0])}
+			if name != "inc":
+				if value[ind]["type"] == "str":
+					text = value[ind]["value"]
+					del value[ind]
+					for char in text:
+						if char == "":
+							value.insert(ind, {"type": "int", "value": 0})
+						else:
+							if ord(char) > 2**interrupts.registers.chr["size"]-1:
+								value.insert(ind, {"type": "int", "value": 2**interrupts.registers.chr["size"]-1})
+							else:
+								value.insert(ind, {"type": "int", "value": ord(char[0])})
 			# PREPROCESSOR
 		
 		# CHECKERS
 		if type == "function":
+			if name == "inc":
+				Bas1xInstructions.inc(interrupts, value)
 			if name == "mov":
 				Bas1xInstructions.move(interrupts, value)
 			if name == "push":
@@ -343,10 +426,16 @@ def bas1x(interrupts: Interrupts, tokens: list):
 					Bas1xInstructions.jmp(interrupts, value)
 			if name == "set":
 				Bas1xInstructions.set(interrupts, value)
+			if name == "ext":
+				Bas1xInstructions.ext(interrupts, value)
 			if name == "int":
 				Bas1xInstructions.interrupt(interrupts, value)
 			interrupts.registers.check()
 		if type == "point":
 			points[name] = value
+		
+		if type == "section":
+			sections[name] = value
+		
 		# CHECKERS
 # BAS1X EXECUTER END
