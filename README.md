@@ -6,6 +6,7 @@ This is a virtual machine with its own Bas1x architecture, it reads the json tre
 - Added BFS services (beta, not full)
 - Added libs
 - Added string (New: `push "TEXT"`, Old: `push "T","E","X","T"`)
+- Replaced `op` register
 - Fixed bugs
 
 ## Installation linux
