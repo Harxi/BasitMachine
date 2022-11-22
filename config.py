@@ -7,7 +7,7 @@ cfg = {
     },
     "registers": {
         "chr": {"size": 8, "value": 0},
-        "op": {"size": 8, "value": 0},
+        "ctr": {"size": 8, "value": 0},
         "ret": {"size": 8, "value": 0},
         "p": {"size": 8, "value": 0},
         "sp": {"size": 8, "value": 0},
