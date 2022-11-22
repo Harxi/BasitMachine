@@ -48,9 +48,13 @@ class BFSInitialize:
 			os.chdir(".BFS")
 		if disks["mainDisk"][0] not in os.listdir(): os.mkdir(disks["mainDisk"][0])
 		if disks["basitDisk"][0] not in os.listdir(): os.mkdir(disks["basitDisk"][0])
+		os.chdir(f'{disks["basitDisk"][0]}')
+		if 'basib' not in os.listdir(): os.mkdir('basib')
+		os.chdir("..")
 		self.root = os.getcwd()
 		self.curdir = self.root
 		self.disk = "~"
+		self.file = None
 		self.sizeMain = os.stat(disks["mainDisk"][0]).st_size
 		self.sizeBasit = os.stat(disks["basitDisk"][0]).st_size
 		self.checkSize()
@@ -84,8 +88,8 @@ class BFSInitialize:
 			self.disk = "~"
 			print("Permission denied")
 		else:
-			table = HexTable(name.split("/")[len(name.split("/"))-1])
-			return table
+			# name.split("/")[len(name.split("/"))-1]
+			self.file = HexTable(name)
 		
 	def mkfile(self, name):
 		if os.getcwd() == self.root:
@@ -95,7 +99,7 @@ class BFSInitialize:
 			if name in os.listdir():
 				pass
 			else:
-				open(name, "w").close()
+				self.file.dump()
 		self.checkSize()
 	
 	def cd(self, path):
