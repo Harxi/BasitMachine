@@ -144,7 +144,8 @@ class Bas1xInstructions:
 					else:
 						print(f"RegisterError: Register '{value[1]['value']['value']}' not found")
 						exit(-1)
-				if value[1]["value"]["value"] < interrupts.ram.size: value[1] = replaceAddress(interrupts, value[1]["value"]["value"])["value"]
+				print(value[1]["value"]["value"], temp1)
+				if temp1["value"] < interrupts.ram.size: value[1] = replaceAddress(interrupts, temp1["value"])["value"]
 				else:
 					print(f"RegisterError: Register '{value[ind]['value']}' not found")
 					exit(-1)
@@ -188,9 +189,10 @@ class Bas1xInstructions:
 			print("operandError: many operands")
 			exit(-1)
 		else:
-			if value[0]["value"] in interrupts.registers.regs: exec('%s = %d'%(f'interrupts.registers.{value[0]["value"]}["value"]',interrupts.stack.pop()))
+			if value[0]["value"] == "void": interrupts.stack.pop()
+			elif value[0]["value"] in interrupts.registers.regs: exec('%s = %d'%(f'interrupts.registers.{value[0]["value"]}["value"]',interrupts.stack.pop()))
 			else:
-				print("OperandError: incorrect operands")
+				print(f"RegisterError: Register '{value[0]['value']}' not found")
 				exit(-1)
 	@staticmethod
 	def goto(interrupts, value, tokens):
@@ -374,21 +376,22 @@ def bas1x(interrupts: Interrupts, tokens: list):
 		type = token["type"]
 		name = token["name"]
 		value = [v for v in token["value"]]
-		
+		length = 0
 		for ind in range(len(value)):
 			# PREPROCESSOR
 			if name != "inc":
-				if value[ind]["type"] == "str":
-					text = value[ind]["value"]
-					del value[ind]
+				if value[ind+length]["type"] == "str":
+					text = value[ind+length]["value"]
+					del value[ind+length]
 					for char in text:
 						if char == "":
-							value.insert(ind, {"type": "int", "value": 0})
+							value.insert(ind+length, {"type": "int", "value": 0})
 						else:
 							if ord(char) > 2**interrupts.registers.chr["size"]-1:
-								value.insert(ind, {"type": "int", "value": 2**interrupts.registers.chr["size"]-1})
+								value.insert(ind+length, {"type": "int", "value": 2**interrupts.registers.chr["size"]-1})
 							else:
-								value.insert(ind, {"type": "int", "value": ord(char[0])})
+								value.insert(ind+length, {"type": "int", "value": ord(char)})
+					length += len(text)-1
 			# PREPROCESSOR
 		
 		# CHECKERS
