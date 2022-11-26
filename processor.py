@@ -138,13 +138,12 @@ class Bas1xInstructions:
 					print(f"RegisterError: Register '{value[1]['value']}' not found")
 					exit(-1)
 			elif value[1]["type"] == "adrs":
-				
+				temp1 = value[1]["value"]
 				if value[1]["value"]["type"] == "reg":
 					if value[1]["value"]["value"] in interrupts.registers.regs: temp1 = replaceRegister(interrupts, value[1]["value"]["value"])
 					else:
 						print(f"RegisterError: Register '{value[1]['value']['value']}' not found")
 						exit(-1)
-				print(value[1]["value"]["value"], temp1)
 				if temp1["value"] < interrupts.ram.size: value[1] = replaceAddress(interrupts, temp1["value"])["value"]
 				else:
 					print(f"RegisterError: Register '{value[ind]['value']}' not found")
