@@ -67,7 +67,7 @@ What's next? Then you can change the configuration, write to BasitMachineAssambl
 
 ## Point syntax
 
-```bmasm
+```asm
 name {
     instructions
 }
@@ -75,19 +75,25 @@ name {
 
 ## Instruction syntax
 
-```bmasm
+```asm
 instruction a, b, c
 ```
 
 ## Comment syntax
 
-```bmasm
+```asm
 ; is comment!
+```
+
+## Section syntax
+
+```asm
+name = rangeStart:rangeEnd
 ```
 
 ## Types syntax
 
-```bmasm
+```asm
 a   ;register (point only for j-family)
 1   ;integer
 "c" ; char
